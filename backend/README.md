@@ -1,4 +1,4 @@
-# 🎯 Backend Implementation Guide for Ayush
+# 🎯 Backend Implementation Guide
 
 ## Quick Start
 
@@ -353,5 +353,3 @@ JWT_SECRET=your-super-secret-key-at-least-32-characters-long
 - JWT: https://jwt.io/introduction
 
 ---
-
-**Need Help?** Message team WhatsApp or call Keshav!
