@@ -1,0 +1,12 @@
+node_modules/
+.cpp
+.cxx
+.build/
+.env
+*.log
+.DS_Store
+uploads/
+*.pem
+coverage/
+.vscode/
+.idea/
