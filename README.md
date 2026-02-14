@@ -30,7 +30,7 @@
 | **Surajit Sahoo** | Frontend Developer | surajitcoc121@gmail.com | UI/UX, API integration |
 | **Arpita Jena** | Frontend Developer | surajitcoc121@gmail.com | Frontend |
 | **Soumya Ranjan Behera** | AI Developer | bsoumyaranjan635@gmail.com | AI negotiator, ID verification, pricing |
-| **Shubham Swastik Pradhan** | Backend Developer | subhamswostikpradhan2004@gmail.com | APIs, database, authentication |
+| **Subham Swastik Pradhan** | Backend Developer | subhamswostikpradhan2004@gmail.com | APIs, database, authentication |
 | **Abhiranjan Kumar** | Backend Developer | abk700007@gmail.com | APIs, database, authentication |
 
 ---
