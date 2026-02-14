@@ -1,0 +1,106 @@
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const connectDB = require('./config/db');
+const deploymentMarker = require('./deployment-marker');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize express app
+const app = express();
+
+// Connect to MongoDB
+connectDB();
+
+// Log server initialization
+console.log('==========================================');
+console.log(`🚀 CampusX Server v${deploymentMarker.version} Starting...`);
+console.log(`📅 Deployed: ${deploymentMarker.deployedAt}`);
+console.log(`🕐 Started: ${new Date().toISOString()}`);
+console.log('==========================================');
+
+// Middleware
+app.use(helmet()); // Security headers
+
+// CORS Configuration - Allow all Vercel deployments and local development
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'http://localhost:8081',
+  'http://localhost:3000',
+  'https://campus-x-tan.vercel.app',
+  'https://campusx-nu.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list or matches Vercel preview pattern or localhost
+    if (allowedOrigins.includes(origin) || 
+        origin.includes('.vercel.app') || 
+        origin.includes('localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+app.use(express.json({ limit: '50mb' })); // Parse JSON bodies with increased limit for images
+app.use(express.urlencoded({ extended: true, limit: '50mb' })); // Parse URL-encoded bodies
+app.use(morgan('dev')); // Logging
+
+// Health check route
+app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
+  res.json({ 
+    status: 'OK', 
+    message: 'CampusX API is running',
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    environment: process.env.NODE_ENV || 'development',
+    version: deploymentMarker.version,
+    deployed: deploymentMarker.deployedAt
+  });
+});
+
+// API Routes
+app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/admin', require('./routes/admin.routes'));
+app.use('/api/listings', require('./routes/listing.routes'));
+// app.use('/api/chats', require('./routes/chat.routes'));
+// app.use('/api/escrow', require('./routes/escrow.routes'));
+// app.use('/api/users', require('./routes/user.routes'));
+// app.use('/api/ai', require('./routes/ai.routes'));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.statusCode || 500).json({
+    success: false,
+    error: err.message || 'Server Error'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Route not found'
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 CampusX API running on port ${PORT}`);
+  console.log(`📝 Environment: ${process.env.NODE_ENV}`);
+});
+
+module.exports = app;
